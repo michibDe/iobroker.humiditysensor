@@ -1,0 +1,536 @@
+<html>
+<head>
+  <!-- these 4 files always have to be included -->
+  <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+  <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+
+  <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+  <!-- these files always have to be included -->
+  <script type="text/javascript" src="../../js/translate.js"></script>
+  <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+  <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+  <script type="text/javascript" src="words.js"></script>
+
+    <style type="text/css">
+        * {
+            box-sizing: border-box
+        }
+
+        #adapter-container {
+            font-size: initial;
+            padding: 0 0.5em;
+        }
+
+            #adapter-container > * {
+                width: 100%;
+            }
+
+        [data-role="adapter-name"] {
+            min-height: 64px;
+            padding-left: 80px;
+            vertical-align: middle;
+            background-image: url(EnOcean.png);
+            background-size: 64px auto;
+            background-position: left center;
+            background-repeat: no-repeat;
+        }
+
+            [data-role="adapter-name"]::before {
+                content: "";
+                display: inline-block;
+                height: 64px;
+                vertical-align: middle;
+            }
+
+        .settings-table > * {
+            display: inline-block;
+        }
+
+        .settings-table > label {
+            width: 15%;
+            white-space: nowrap;
+            padding-right: 1em;
+        }
+
+            .settings-table > label ~ span {
+                font-size: 80%;
+            }
+
+        .overflow {
+            height: 150px;
+        }
+
+        .ui-icon-custom-delete {
+            background-image: url(img/delete.png) !important;
+            background-size: 16px 16px !important;
+        }
+
+        .ui-icon-custom-add {
+            background-image: url(img/add.png) !important;
+            background-size: 16px 16px !important;
+        }
+
+        .message-error {
+            color: red;
+        }
+
+        .highlight {
+            animation: highlight 2s;
+        }
+
+        .ui-multiselect {
+            padding: 0;
+            vertical-align: top;
+        }
+
+        #manageDevices:not(.active) > .active {
+            display: none;
+        }
+
+        .label-class {
+            display: block;
+            width: 150px;
+            float: left;
+            text-align: right;
+            padding-right: 10px;
+            clear: left;
+        }
+
+        .dropdown-content {
+          max-height: 650px;
+        }
+    </style>
+
+    <!-- you have to define 2 functions in the global scope: -->
+    <script type="text/javascript">
+
+        // remember the onChange handler
+        let _onChange;
+
+        let namespace = 'enocean.' + instance;
+        let namespaceLen = namespace.length;
+        let counter;
+        let devices = {};
+        let manufacturerList = {};
+        let eepTypeList = {};
+
+        let deviceCommands = {
+            "delete": {}
+        };
+
+        let enoceanCommands = {
+            "addDevice": {}
+        };
+
+
+        $(document).ready(function(){
+                $('.modal').modal();
+            });
+
+        function getComPorts(settings) {
+            sendTo(null, 'listSerial', null, function (list) {
+                if (!list || !list.result) {
+                    return;
+                }
+                list = list.result;
+
+                var element = $('#serialport');
+                for (var j = 0; j < list.length; j++) {
+                  element.append('<option value="' + list[j] + '">' + list[j]  + '</option>');
+                }
+                $('#serialport.value').val(settings.serialport).select();
+
+            });
+        }
+
+        // send the selected action to the adapter
+        function onSelect(event) {
+            var $this = $(this);
+            var val = $this.val();
+            var id = event.data.id;
+            if (!val) return;
+
+            if (deviceCommands[val].name) {
+                // enter additional parameter
+                var param = prompt(_(deviceCommands[val].name), '');
+                if (param !== '') {
+                    sendTo(null, val, { deviceID: id, param: param }, function (result) {
+                        $this.val('');
+                        if ($.ui.selectmenu) $this.selectmenu('refresh');
+                        if (result && result.error) {
+                            showMessage(result.error, _('Error'), 'alert');
+                        } else if (result && result.result) {
+                            showMessage(_(result.result), _('Success'), 'check');
+                        }
+                    });
+                }
+            } else {
+                sendTo(null, val, { deviceID: id }, function (result) {
+                    $this.val('');
+                    if ($.ui.selectmenu) $this.selectmenu('refresh');
+                    if (result && result.error) {
+                        showMessage(result.error, _('Error'), 'alert');
+                    } else if (result && result.result) {
+                        showMessage(_(result.result), _('Success'), 'check');
+                    }
+                });
+            }
+        }
+
+        // show the devices
+        function showDevice(obj, isFirst) {
+            var text = '';
+            text += '<td style="text-align: center; white-space: nowrap;">' + obj.native.id + '</td>';
+            text += '<td style="text-align: center; white-space: nowrap;">' + obj.native.eep + '</td>';
+            text += '<td style="text-align: center; white-space: nowrap;">' + obj.native.manufacturer + '</td>';
+            if (obj.native.device) {
+              text += '<td style="text-align: center; white-space: nowrap;">' + obj.native.device + '</td>';
+            } else {
+              text += '<td style="text-align: center; white-space: nowrap;">' + '--' + '</td>';
+            }
+            text += '<td style="text-align: center; white-space: nowrap;">' + obj.native.desc + '</td>';
+
+            text += '<td style="text-align: center;">' + '' +
+              '<select id="' + obj.native.id + '_deviceOP" data-id="' + obj.native.id + '">' + '<option value="" disabled selected>Select operation</option>';
+
+            for (var i in deviceCommands) {
+                text += '<option value="' + i + '">' + _(i) + '</option>';
+            }
+
+            text += '</select></td>';
+
+            text = '<tr data-id="' + obj.native.id + '">' + text + '</tr>';
+            $('#devices').append(text);
+            $('#' + obj.native.id + '_deviceOP').change({id : obj.native.id}, onSelect);
+            $('#' + obj.native.id + '_deviceOP').select();
+        }
+
+
+        // the function loadSettings has to exist ...
+        function load(settings, onChange) {
+            // remember the onChange handler
+            _onChange = onChange;
+            // example: select elements with id=key and class=value and insert value
+            if (!settings) return;
+
+            $('.value').each(function () {
+                var key = $(this).attr('id');
+                var $key = $('#' + key + '.value');
+                if ($key.attr('type') === 'checkbox') {
+                    $key.prop('checked', settings[key]).change(function () {
+                        onChange();
+                    });
+                } else {
+                    $key.val(settings[key]).change(function () {
+                        onChange();
+                    }).keyup(function () {
+                        onChange();
+                    });
+                }
+            });
+
+            // Populate the dropdown for USB/COM ports instead of
+            getComPorts(settings);
+
+            // subscribe to changes
+            socket.emit('subscribeStates', namespace + '.info.*');
+            socket.emit('subscribeObjects', namespace + '.*'); // seems, this doesn't work.
+
+            // populate the list of known devices
+            socket.emit('getObjectView', 'system', 'device', { startkey: 'enocean.' + instance + '.', endkey: 'enocean.' + instance + '.\u9999', include_docs: true }, function (err, _devices) {
+                socket.emit('getStates', function (err, _values) {
+                    var namespace = 'enocean.' + instance + '.';
+                    var len = namespace.length;
+
+                    if (_devices && _devices.rows && _devices.rows.length) {
+                        for (var j = 0; j < _devices.rows.length; j++) {
+                            devices[_devices.rows[j].value._id] = _devices.rows[j].value;
+                            showDevice(_devices.rows[j].value, true);
+                        }
+                    }
+                });
+            });
+
+            // populate the list of manufacturers eind their devices
+            sendTo(null, "getManufacturerList", null, function (result) {
+              var element = $('#manufacturer');
+              element.append('<option value="" disabled selected>unknown</option>');
+              manufacturerList = result.result;
+              for (var key in manufacturerList) {
+                if (manufacturerList.hasOwnProperty(key)) {
+                  element.append('<option value="' + key + '">' + key  + '</option>');
+                }
+              }
+              $('#manufacturer').select();
+            });
+
+            // get the list of supported EEPs and functions.
+            sendTo(null, "getEEPList", null, function (result) {
+              var element = $('#eep');
+              element.append('<option value="" disabled selected>xx-xx-xx</option>');
+              eepTypeList = result.result;
+              for (var key in eepTypeList) {
+                 if (eepTypeList.hasOwnProperty(key)) {
+                   element.append('<option value="' + key + '">' + key  + '</option>');
+                 }
+               }
+              $('#eep').select();
+            });
+
+
+
+
+            $('#manufacturer').on('change',function() {
+              var deviceList = manufacturerList[$(this).val()];
+              $('#eep').prop('selectedIndex', 0);
+              $('#eep').select();
+              /*$('#desc').empty();
+              $('#desc').select();*/
+              var element = $('#device');
+              element.empty();
+              for (var key in deviceList) {
+                if (deviceList.hasOwnProperty(key)) {
+                  var text = translateWord("desc", systemLang, deviceList[key]);
+                  element.append('<option value="' + key + '">' + key  + '</option>');
+                }
+              }
+              $('#device').prop('selectedIndex', 0);
+              $('#device').select();
+            });
+
+            $('#device').on('change',function() {
+                var deviceList = manufacturerList[$('#manufacturer').val()];
+                $('#desc').empty();
+                $('#desc').select();
+                var element = $('#desc');
+                element.empty();
+                for (var key in deviceList) {
+                    if (deviceList.hasOwnProperty(key)) {
+                        var text = translateWord("desc", systemLang, deviceList[key]);
+                        element.append('<option value="' + key + '">' + text  + '</option>');
+                    }
+                }
+                $('#desc').prop('selectedIndex', 0);
+                $('#desc').select();
+            });
+
+            $('#eep').on('change',function() {
+              var deviceList = eepTypeList[$(this).val()];
+              $('#manufacturer').prop('selectedIndex', 0);
+              $('#manufacturer').select();
+              $('#device').empty();
+              $('#device').select();
+              var element = $('#desc');
+              element.empty();
+              for (var key in deviceList) {
+                if (deviceList.hasOwnProperty(key)) {
+                  element.append('<option value="' + key + '">' + key  + '</option>');
+                }
+              }
+              $('#desc').select();
+            });
+
+            $('#addDeviceSubmit').click(function() {
+              var id = $("#id").val().toLowerCase();
+              try{var eep = $("#eep").val().toLowerCase();}catch(err){}
+              var manufacturer = $("#manufacturer").val();
+              try{var description = $("#desc").val().toLowerCase();}catch(err){}
+              var device = $('#device').val();
+              if (null === manufacturer || undefined === manufacturer) {manufacturer = "";}
+              if (null === description || undefined === description) {description = "";}
+              if (null === device || undefined === device) {device = "";}
+              if (null === eep || undefined === eep) {eep = "";}
+              var data = { deviceID: id, eep: eep, manufacturer : manufacturer, desc : description};
+              data.device = device;
+              if (id=="" || id.length !== 8) {
+                alert("ID has the wrong format (not empty, 8 char long).");
+              } else {
+                sendTo(null, "addDevice", data, function (result) {
+                  if (result && result.error) {
+                    showMessage(result.error, _('Error'), 'alert');
+                  }
+                });
+              }
+            });
+
+            $('#autodetect').click(() => {
+
+                sendTo(null, "setTeachin", true, (result) => {
+                    console.log('Teachin clicked');
+                    $('#autodetect').addClass('disabled');
+                    showMessage('If no new device is detected, check the Log.', _('Info'), 'check');
+                    counter = settings.teachinTime;
+                  countdown();
+                })
+            });
+
+            function countdown(){
+                if(counter >0){
+                    setTimeout(function(){
+                        counter = counter -1;
+                        countdown();
+                    }, 1000);
+                    $('#autodetect').html(_('Active for %s seconds', counter));
+                }else if(counter === 0){
+                    $('#autodetect').html('Autodetect');
+                    $('#autodetect').removeClass('disabled');
+                    counter = $('permit').val();
+                }
+            }
+
+            // react to object changes e.g. adding or deleting a device
+            socket.on('objectChange', function (id, obj) {
+                if (id.substring(0, namespaceLen) !== namespace) return;
+
+                console.log("Object change announced: " + id + " and obj = " + JSON.stringify(obj));
+                if (!obj) {
+                    if (devices[id]) {
+                        console.log("To delete : " + 'tr[data-id="' + devices[id].native.id + '"]');
+                        $('tr[data-id="' + devices[id].native.id + '"]').remove();
+                        delete devices[id];
+                    }
+                } else {
+                    if (obj.type === 'device' && obj.native) {
+                        if (devices[id]) {
+                            console.log('Device changed: ' + id + ': ' + JSON.stringify(obj.native));
+                        } else {
+                            console.log('New device: ' + id + ': ' + JSON.stringify(obj.native));
+                            devices[id] = obj;
+                        }
+                        showDevice(obj);
+                    }
+                }
+            });
+
+            // react to changes
+            socket.on('stateChange', function (id, state) {
+                // only watch our own states
+                if (id.substring(0, namespaceLen) !== namespace) return;
+                console.log("State change announced: " + id + " and obj = " + JSON.stringify(state));
+            });
+
+            // Signal to admin, that no changes yet
+            onChange(false);
+        }
+
+        // ... and the function save has to exist.
+        // you have to make sure the callback is called with the settings object as first param!
+        function save(callback) {
+            // example: select elements with class=value and build settings object
+            var obj = {};
+            $('.value').each(function () {
+                var $this = $(this);
+                if ($this.attr('type') === 'checkbox') {
+                    obj[$this.attr('id')] = $this.prop('checked');
+                } else {
+                    obj[$this.attr('id')] = $this.val();
+                }
+            });
+            callback(obj);
+        }
+    </script>
+</head>
+<body>
+
+
+    <div class="m adapter-container">
+
+      <!-- Modal Structure -->
+      <div id="dialog-form" class="modal">
+        <div class="modal-content">
+          <h4 class="blue lighten-3 translate" style="width:100%;">Create new device</h4>
+          <p class="validateTips translate">Add ID and either manufacturer/device or EEP/description.</p>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="12345678" type="text" name="id" id="id" value="" class="validate">
+              <label for="id" class="translate">ID</label>
+            </div>
+            <div class="input-field col s6">
+              <select placeholder="unknown" class="value" name= "manufacturer" id="manufacturer" type="text" ></select>
+              <label for="manufacturer" class="translate">Manufacturer</label>
+            </div>
+            <div class="input-field col s6">
+              <select placeholder="unknown" class="value" name= "device" id="device" type="text" ></select>
+              <label for="device" class="translate">Devices</label>
+            </div>
+            <div class="input-field col s12" style="height:1em;">
+            </div>
+             <div class="input-field col s6">
+               <select placeholder="xx-xx-xx" class="value" name= "eep" id="eep" type="text" ></select>
+               <label for="eep" class="translate">EEP</label>
+             </div>
+             <div class="input-field col s6">
+               <select placeholder="native" class="value" name= "desc" id="desc" type="text" ></select>
+               <label for="desc" class="translate">Description</label>
+             </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn waves-effect waves-light modal-close modal-action translate" type="submit" name="action" id="addDeviceSubmit">add device
+            <i class="material-icons right">send</i>
+          </button>
+          <button class="btn waves-effect waves-light modal-close modal-action translate" href="#!">close</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <ul class="tabs">
+            <li class="tab col s2"><a href="#tab-main"  class="translate active">Options</a></li>
+            <li class="tab col s2 le-settings"><a href="#tab-dev" class="translate">Devices</a></li>
+          </ul>
+        </div>
+        <div id="tab-main" class="col s12 page">
+          <div class="row">
+            <div class="col s12 m4 l2">
+              <img src="EnOcean.png" class="logo" style="height:7em; width: 7em;">
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12 m6 l3">
+              <select class="value" id="serialport" type="text" ></select>
+              <label for="serialport" class="translate">Serial port:</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12 m6 l3">
+              <input class="value" id="timeout"/>
+              <label for="timeout" class="translate">Timeout</label>
+            </div>
+          </div>
+
+        </div>
+        <div id="tab-dev" class="col s12 page">
+          <div class="row">
+            <div class="col s12 m4 l2">
+              <img src="EnOcean.png" class="logo" style="height:7em; width: 7em;">
+            </div>
+          </div>
+
+          <div class="input-field col s2">
+            <a data-operation="addDevice" data-icon="add" class="waves-effect waves-light btn modal-trigger translate" href="#dialog-form">Add device</a>
+          </div>
+          <div class="input-field col s2">
+            <a class="waves-effect waves-light btn translate" id="autodetect">Autodetect</a>
+          </div>
+
+          <table class="bordered" style="width: calc(100% - 20px); padding-left: 10px">
+              <thead>
+                  <tr>
+                      <th style="width: 30px;  text-align: center; white-space: nowrap" class="translate">ID</th>
+                      <th style="width: 100px; text-align: center; white-space: nowrap" class="translate">EEP</th>
+                      <th style="width: 70px;  text-align: center; white-space: nowrap" class="translate">Manufacturer</th>
+                      <th style="width: 70px;  text-align: center; white-space: nowrap" class="translate">Device</th>
+                      <th style="width: 150px; text-align: center; white-space: nowrap" class="translate">Description</th>
+                      <th style="width: 20px;  text-align: center; white-space: nowrap" class="translate">Function</th>
+                  </tr>
+              </thead>
+              <tbody id="devices"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+</body>
+</html>

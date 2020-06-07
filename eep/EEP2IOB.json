@@ -1,0 +1,207 @@
+{
+  "a5-02-05" : {
+    "desc": {
+      "native": {
+        "devName": "Temperature Sensor Range 0°C to +40°C",
+        "iobObjects": [
+          {"id": "temperature","common.name": "Temperature","common.type": "number","common.min": "0","common.max": "40","common.def": "0",
+            "common.role": "value.temperature", "common.states" : "", "common.read": "true", "common.write": "false", "common.unit": "°C"},
+          {"id": "learn_button","common.name": "Learn Button","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "false:teach-in telegram;true:data telegram", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "a5-07-01" : {
+    "desc": {
+      "native": {
+        "devName": "Occupancy with Supply voltage monitor",
+        "iobObjects": [
+          {"id": "svc","common.name": "Supply voltage","common.type": "number","common.min": "0","common.max": "5","common.def": "0",
+            "common.role": "value.supply_voltage", "common.states" : "", "common.read": "true", "common.write": "false", "common.unit": "V"},
+          {"id": "presence","common.name": "Presence","common.type": "number","common.min": "0","common.max": "255","common.def": "0",
+            "common.role": "state", "common.states" : "0:false;1:true", "common.read": "true", "common.write": "false"},
+          {"id": "learn_button","common.name": "Learn Button","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "false:teach-in telegram;true:data telegram", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "a5-12-01" : {
+    "desc": {
+      "native": {
+        "devName": "Automated Meter Reading Electricity",
+        "iobObjects": [
+          {"id": "power","common.name": "Current power","common.type": "number","common.min": "0","common.max": "16777215","common.def": "0",
+            "common.role": "value", "common.states" : "", "common.read": "true", "common.write": "false", "common.unit": "W"},
+          {"id": "energy_counter","common.name": "Cumulative power","common.type": "number","common.min": "0","common.max": "16777215","common.def": "0",
+            "common.role": "value", "common.states" : "", "common.read": "true", "common.write": "false", "common.unit": "kWh"},
+          {"id": "ti","common.name": "Tariff info","common.type": "number","common.min": "0","common.max": "15","common.def": "0",
+            "common.role": "value", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "learn_button","common.name": "Learn Button","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "false:teach-in telegram;true:data telegram", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "a5-14-0a" : {
+    "desc": {
+      "native": {
+        "devName": "Window/Door-Sensor with Vibration detection",
+        "iobObjects": [
+          {"id": "svc","common.name": "Supply voltage","common.type": "number","common.min": "0","common.max": "5","common.def": "0",
+            "common.role": "value.supply_voltage", "common.states" : "", "common.read": "true", "common.write": "false", "common.unit": "V"},
+          {"id": "ct","common.name": "Contact","common.type": "number","common.min": "0","common.max": "17","common.def": "0",
+            "common.role": "state", "common.states" : "0:Closed;1:Tilt;16:Reserved;17:Open", "common.read": "true", "common.write": "false"},
+          {"id": "vib","common.name": "Vibration","common.type": "number","common.min": "0","common.max": "1","common.def": "0",
+            "common.role": "value", "common.states" : "0:No vibration detected;1:Vibration detected", "common.read": "true", "common.write": "false"},
+          {"id": "learn_button","common.name": "Learn Button","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "false:teach-in telegram;true:data telegram", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "a5-38-08" : {
+    "desc": {
+      "native": {
+        "devName": "Gateway",
+        "iobObjects": [
+          {"id": "gateway.01.com","common.name": "Command ID","common.type": "number","common.min": "0","common.max": "16777215","common.def": "0",
+            "common.role": "value", "common.states" : "", "common.read": "true", "common.write": "false", "common.unit": "W"},
+          {"id": "ti","common.name": "Tariff info","common.type": "number","common.min": "0","common.max": "15","common.def": "0",
+            "common.role": "value", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "learn_button","common.name": "Learn Button","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "true:teach-in telegram;false:data telegram", "common.read": "true", "common.write": "false"},
+          {"id": "dt","common.name": "Current value or cumulative value","common.type": "number","common.min": "0","common.max": "1","common.def": "0",
+            "common.role": "value", "common.states" : "0:kWh;1:W", "common.read": "true", "common.write": "false"},
+          {"id": "div","common.name": "Divisor for value","common.type": "number","common.min": "0","common.max": "3","common.def": "0",
+            "common.role": "value", "common.states" : "0:1;1:10;2:100;2:1000", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "d2-01-09" : {
+    "desc": {
+      "native": {
+        "devName": "Electronic switch with Energy Measurement",
+        "iobObjects": [
+          {"id": "cmd","common.name": "Command identifier","common.type": "number","common.min": "0","common.max": "13","common.def": "",
+            "common.role": "state", "common.states" : "1:Actuator Set Output;2:Actuator Set Local;3:Actuator Status Query;4:Actuator Status Response;5:Actuator Set Measurement;6:Actuator Measurement Query;7:Actuator Measurement Response;", "common.read": "true", "common.write": "true"},
+          {"id": "dv","common.name": "Dim value","common.type": "number","common.min": "0","common.max": "7","common.def": "0",
+            "common.role": "state", "common.states" : "0:Switch to new output value;1:Dim to new output value - dim timer 1;2:Dim to new output value - dim timer 2;3:Dim to new output value - dim timer 3;4:Stop dimming", "common.read": "true", "common.write": "true"},
+          {"id": "io","common.name": "I/O channel","common.type": "number","common.min": "0","common.max": "31","common.def": "0",
+            "common.role": "state", "common.states" : "0:Output channel;31:Input channel", "common.read": "true", "common.write": "true"},
+          {"id": "ov","common.name": "Output value","common.type": "number","common.min": "0","common.max": "127","common.def": "0",
+            "common.role": "state", "common.states" : "0:Off;127:Output value not valid / not applicable", "common.read": "true", "common.write": "true"},
+          {"id": "lc","common.name": "Local control","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "0:false;1:true", "common.read": "true", "common.write": "false"},
+          {"id": "de","common.name": "Taught-in devices","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "", "common.read": "true", "common.write": "true"},
+          {"id": "oc","common.name": "Over current switch off","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "0:false;1:true", "common.read": "true", "common.write": "false"},
+          {"id": "el","common.name": "Error Level","common.type": "number","common.min": "0","common.max": "17","common.def": "0",
+            "common.role": "state", "common.states" : "0:Hardware OK;1:Hardware Warning;16:Hardware failure;17:Not Supported", "common.read": "true", "common.write": "false"},
+          {"id": "un","common.name": "Unit","common.type": "number","common.min": "0","common.max": "4","common.def": "3",
+            "common.role": "state", "common.states" : "0:Ws;1:Wh;2:kWh;3:W;4:kW", "common.read": "true", "common.write": "false"},
+          {"id": "mv","common.name": "Measurement value","common.type": "number","common.min": "0","common.max": "4294967295","common.def": "0",
+            "common.role": "state", "common.states" : "", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "d5-00-01" : {
+    "desc": {
+      "native": {
+        "devName": "Single Input Contact",
+        "iobObjects": [
+          {"id": "contact_status","common.name": "Contact Status","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "false:closed;true:open", "common.read": "true", "common.write": "false"},
+          {"id": "learn_button","common.name": "Learn Button","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "state", "common.states" : "false:not pressed;true:pressed", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "f6-02-01": {
+    "desc": {
+      "native": {
+        "devName": "Light and Blind Control - Application Style 1",
+        "iobObjects": [
+          {"id": "AI","common.name": "AI","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "A0","common.name": "A0","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "BI","common.name": "BI","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "B0","common.name": "B0","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"}
+        ]
+      },
+      "smokedetector_1": {
+        "iobObjects": [
+          {"id": "keep_alive","common.name": "Keep Alive","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "indicator.alive", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "alarm","common.name": "Alarm","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "battery_status","common.name": "Battery Status","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "indicator", "common.states" : "", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "f6-02-02": {
+    "desc": {
+      "native": {
+        "devName": "Light and Blind Control - Application Style 2",
+        "iobObjects": [
+          {"id": "AI","common.name": "AI","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "A0","common.name": "A0","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "BI","common.name": "BI","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "B0","common.name": "B0","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "f6-02-03": {
+    "desc": {
+      "native": {
+        "devName": "Light Control - Application Style 1",
+        "iobObjects": [
+          {"id": "A0","common.name": "Automatic Mode","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "A1","common.name": "Light On/Off","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "B0","common.name": "Dim light up","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"},
+          {"id": "B1","common.name": "Dim light down","common.type": "boolean","common.min": "false","common.max": "true","common.def": "false",
+            "common.role": "switch", "common.states" : "", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "f6-10-00" : {
+    "desc": {
+      "native": {
+        "devName": "Window Handle",
+        "iobObjects": [
+          {"id": "window_handle","common.name": "Window Handle Status","common.type": "number","common.min": "0","common.max": "2","common.def": "0",
+            "common.role": "state", "common.states" : "0:closed;1:open;2:tilt", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  },
+  "unknown": {
+    "desc": {
+      "native": {
+        "iobObjects": [
+          {"id": "raw","common.name": "raw telegram","common.type": "string", "common.role": "value", "common.read": "true", "common.write": "false"},
+          {"id": "type","common.name": "type of telegram","common.type": "number", "common.role": "value", "common.states": "210:VLD;165:4BS", "common.read": "true", "common.write": "false"}
+        ]
+      }
+    }
+  }
+}
