@@ -164,6 +164,27 @@
       ]
     }
   },
+  "Nod On": {
+    "Temperature and Humidity Sensor": {
+      "desc": {
+        "en": "Temperature and Humidity Sensor",
+        "de": "Temperatur- und Luftfeuchtigkeitssensor",
+        "ru": "Датчик температуры и влажности",
+        "pt": "Sensor de Temperatura e Humidade",
+        "nl": "Temperatuur- en vochtigheidssensor",
+        "fr": "Capteur de température et d'humidité",
+        "it": "Sensore di temperatura e umidità",
+        "es": "Sensor de temperatura y humedad",
+        "pl": "Czujnik temperatury i wilgotności"
+      },
+      "eep": [
+        {
+          "val": "A5-04-01",
+          "type": "native"
+        }
+      ]
+    }
+  },  
   "OMNIO AG": {},
   "PERMUNDO GMBH": {
     "PSC234": {
