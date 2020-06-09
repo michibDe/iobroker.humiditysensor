@@ -53,7 +53,7 @@ let SERIALPORT_ESP3_PARSER = null;
 let lastCMD = [];
 
 const adapter = utils.Adapter({
-    name: 'enocean',
+    name: 'humiditysensor',
     ready: main
 });
 

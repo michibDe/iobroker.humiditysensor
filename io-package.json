@@ -1,6 +1,6 @@
 {
     "common": {
-        "name": "my_enocean",
+        "name": "humiditysensor",
         "version": "0.1.0",
         "news": {
             "0.1.0": {
@@ -15,7 +15,7 @@
                 "pl": ""
             }
         },
-        "title": "my_EnOcean",
+        "title": "humiditySensor",
         "desc": {
             "en": "ioBroker EnOcean Adapter",
             "de": "ioBroker EnOcean Adapter",
@@ -32,7 +32,7 @@
         "mode": "daemon",
         "icon": "EnOcean.png",
         "enabled": true,
-        "extIcon": "https://github.com/michibDe/humiditySensor/blob/master/admin/EnOcean.png",
+        "extIcon": "https://github.com/michibDe/iobroker.humiditysensor/blob/master/admin/EnOcean.png",
         "keywords": [
             "EnOcean",
             "vis",
@@ -40,7 +40,7 @@
             "graphical",
             "scada"
         ],
-        "readme": "https://github.com/michibDe/humiditySensor/blob/master/README.md",
+        "readme": "https://github.com/michibDe/iobroker.humiditysensor/blob/master/README.md",
         "license": "MIT",
         "loglevel": "info",
         "type": "hardware",
