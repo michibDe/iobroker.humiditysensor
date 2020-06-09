@@ -15,10 +15,8 @@ module.exports = function (telegram) {
 
   retValue['learn_button'] = (lb === 1);
   if (1 === lb) {
-    let resultTempValue =  ((tempValue -250)*(40/250));
-    let resultHumidityValue =  ((humidityValue -250)*(100/250));	
-    retValue['temperature'] = resultTempValue.toFixed(2);
-	retValue['humidity'] = resultHumidityValue.toFixed(2);
+    retValue['temperature'] = tempValue*(40/250);
+	retValue['humidity'] = humidityValue * (100/250);
   }
 
   return retValue;
