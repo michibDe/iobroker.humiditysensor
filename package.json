@@ -1,21 +1,21 @@
 {
-  "name": "iobroker.enocean",
-  "version": "0.3.0",
-  "description": "ioBroker EnOcean Adapter",
+  "name": "iobroker.myenocean",
+  "version": "0.1.0",
+  "description": "My ioBroker EnOcean Adapter",
   "author": {
-    "name": "Jey Cee",
-    "email": "jey-cee@live.com"
+    "name": "michibDe",
+    "email": "michael.ba@t-online.de"
   },
   "engines": {
     "node": ">=8.0"
   },
   "contributors": [
     {
-      "name": "Jey Cee",
-      "email": "jey-cee@live.com"
+      "name": "michibDe",
+      "email": "michael.ba@t-online.de"
     }
   ],
-  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.enocean",
+  "homepage": "https://github.com/michibDe/iobroker.humiditySensor",
   "license": "MIT",
   "keywords": [
     "ioBroker",
@@ -25,7 +25,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/iobroker-community-adapters/ioBroker.enocean"
+    "url": "https://github.com/michibDe/iobroker.humiditySensor"
   },
   "dependencies": {
     "serialport": "^7.1.5",
