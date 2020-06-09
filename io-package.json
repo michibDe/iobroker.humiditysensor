@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "humiditysensor",
-        "version": "0.1.2",
+        "version": "0.1.3",
         "news": {
-            "0.1.2": {
+            "0.1.0": {
                 "en": "",
-                "de": "Anppasung von Scale Berechnung",
+                "de": "Eigene Implementierung auf Basis von Enocean Adapter 0.3.0",
                 "ru": "",
                 "pt": "",
                 "nl": "",
@@ -13,10 +13,21 @@
                 "it": "",
                 "es": "",
                 "pl": ""
-            },		
-            "0.1.0": {
+            },
+            "0.1.2": {
                 "en": "",
-                "de": "Eigene Implementierung auf Basis von Enocean Adapter 0.3.0",
+                "de": "Anpassung von Scale Berechnung",
+                "ru": "",
+                "pt": "",
+                "nl": "",
+                "fr": "",
+                "it": "",
+                "es": "",
+                "pl": ""
+            },			
+            "0.1.3": {
+                "en": "",
+                "de": "Formatierung Luftfeuchtigkeit auf zwei Nachkommastellen",
                 "ru": "",
                 "pt": "",
                 "nl": "",
