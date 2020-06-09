@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "humiditysensor",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "news": {
             "0.1.0": {
                 "en": "",
@@ -15,7 +15,7 @@
                 "pl": ""
             }
         },
-        "title": "humiditySensor",
+        "title": "humiditysensor",
         "desc": {
             "en": "ioBroker EnOcean Adapter",
             "de": "ioBroker EnOcean Adapter",
