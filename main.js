@@ -62,11 +62,13 @@ let teachin = false;
 
 // convert byte to hex
 function toHex(byte) {
+	adapter.log.debug('Function: toHex');
     return ('0' + (byte & 0xFF).toString(16)).slice(-2);
 }
 
 // byte array to hex
 function toHexString(byteArray) {
+	adapter.log.debug('Function: toHexString');
     let s = '';
     byteArray.forEach(function (byte) {
         s += toHex(byte);
@@ -83,6 +85,8 @@ function handleType1Message(espPacket) {
     const telegram = new RadioTelegram(espPacket);
     const senderID = telegram.senderID;
     const tType = telegram.type;
+	
+	adapter.log.debug('Function: handleType1Message');
 
     // ID is 4 bytes long and at the end of the data plus on status byte.
     adapter.log.debug("Message for ID " + senderID + " has been received.");
@@ -246,6 +250,7 @@ function handleType2Message(espPacket) {
     const telegram = new ResponseTelegram(espPacket);
     let retCode = telegram.data[0];
     let resp = telegram.dataLength + ' ' + telegram.optionalLength;
+	adapter.log.debug('Function: handleType2Message');
     console.log(resp);
     switch(resp){
         case '1 0':          //Standard Response
@@ -353,6 +358,7 @@ function handleType2Message(espPacket) {
  * @param {Buffer} data The received data
  */
 function parseMessage(data) {
+	adapter.log.debug('Function: parseMessage');
     adapter.log.debug("Received raw message: " + data.toString("hex"));
 
     const packet = new ESP3Packet(data);
@@ -375,6 +381,7 @@ function parseMessage(data) {
 
 // add a device
 function addDevice(id, manufacturer, device, eep, description) {
+	adapter.log.debug('Function: addDevice');
     // check, if a EEP translation matrix is available
     let eepEntry = TRANSLATION_MATRIX[eep.toLowerCase()];
 
@@ -470,6 +477,7 @@ function addDevice(id, manufacturer, device, eep, description) {
 
 // delete a device
 function deleteDevice(deviceId) {
+	adapter.log.debug('Function: deleteDevice');
     if (deviceId in devices) {
         adapter.log.debug(`deleting device and state ${deviceId}`);
         // delete all states
@@ -493,6 +501,7 @@ function deleteDevice(deviceId) {
 // is called when databases are connected and adapter received configuration.
 // start here!
 function main() {
+	adapter.log.debug('Function: main');
     // Sicherstellen, dass die instanceObjects aus io-package.json korrekt angelegt sind
     ensureInstanceObjects();
 
@@ -517,7 +526,8 @@ function main() {
     sP.list(function (err, ports) {
         AVAILABLE_PORTS = ports.map(p => p.comName);
     });
-
+	adapter.log.debug('Function: sp.List');
+	
     try {
         SERIAL_PORT = new sP(adapter.config.serialport, { baudRate: 57600, autoOpen: false });
         SERIALPORT_ESP3_PARSER = SERIAL_PORT.pipe(new SERIALPORT_PARSER_CLASS());
@@ -553,6 +563,7 @@ function main() {
 
 // is called when adapter shuts down - callback has to be called under any circumstances!
 adapter.on('unload', (callback) => {
+	adapter.log.debug('Adaptor On: unload');
     try {
         adapter.log.debug("Shutting down.");
         adapter.setState('info.connection', false, true);
@@ -569,6 +580,7 @@ adapter.on('unload', (callback) => {
 
 // is called if a subscribed object changes
 adapter.on('objectChange', (id, obj) => {
+	adapter.log.debug('Adaptor On: objectChange');
 
     if (id.startsWith(adapter.namespace)) {
         // this is our own object.
@@ -587,6 +599,7 @@ adapter.on('objectChange', (id, obj) => {
 
 // is called if a subscribed state changes
 adapter.on('stateChange', (id, state) => {
+	adapter.log.debug('Adaptor On: stateChange');
     if (state && !state.ack && id.startsWith(adapter.namespace)) {
         console.log(id + ' ' + JSON.stringify(state));
 
@@ -597,6 +610,7 @@ adapter.on('stateChange', (id, state) => {
 adapter.on('message', (obj) => {
     // responds to the adapter that sent the original message
     function respond(response) {
+		adapter.log.debug('Function: respond');
         if (obj.callback)
             adapter.sendTo(obj.from, obj.command, response, obj.callback);
     }
@@ -613,6 +627,7 @@ adapter.on('message', (obj) => {
     };
     // make required parameters easier
     function requireParams(params) {
+		adapter.log.debug('Function: requireParams');
         if (!(params && params.length)) return true;
         for (const param of params) {
             if (!(obj.message && obj.message.hasOwnProperty(param))) {
@@ -731,6 +746,8 @@ adapter.on('message', (obj) => {
 
 // filter serial deviceesfunction filterSerialPorts(path) {
 function filterSerialPorts(path) {
+	
+	adapter.log.debug('Function: filterSerialPorts');
     // get only serial port names
     if (!(/(tty(ACM|USB|AMA|MFD|Enocean|enocean|EnOcean|\.usbserial-)|rfcomm)/).test(path)) return false;
 
@@ -742,6 +759,8 @@ function filterSerialPorts(path) {
 // list serial ports
 function listSerial() {
     let result;
+	
+	adapter.log.debug('Function: listSerial');
 
     if (PLATFORM === 'linux' || PLATFORM === 'darwin') {
         // Filter out the devices that aren't serial ports
@@ -772,6 +791,8 @@ function listSerial() {
 
 // Workaround für unvollständige Adapter-Upgrades
 function ensureInstanceObjects() {
+	
+	adapter.log.debug('Function: ensureInstanceObjects');
     // read io-package.json
     const ioPack = JSON.parse(
         fs.readFileSync(path.join(__dirname, 'io-package.json'), 'utf8')
@@ -795,7 +816,7 @@ function getGatewayInfo(){
     let header = Buffer.from([0x00, 0x01,0x00, 0x05]);
     let data;
 
-
+	adapter.log.debug('Function: getGatewayInfo');
     //CO_RD_VERSION
     data = Buffer.from([0x03]);
     sendCMDtoGateway(header, data);
@@ -811,9 +832,6 @@ function getGatewayInfo(){
         data = Buffer.from([0x25]);
         sendCMDtoGateway(header, data);
         lastCMD.push(0x25);
-
-
-
 }
 
 
@@ -822,6 +840,8 @@ function sendCMDtoGateway(header, data){
     let crc8h = Buffer.from([crc8.calcCrc8(header)]);
     let crc8d = Buffer.from([crc8.calcCrc8(data)]);
 
+	adapter.log.debug('Function: sendCMDtoGateway');
+	
     SERIAL_PORT.write(Buffer.concat([sync, header, crc8h, data, crc8d]), (err) => {
         if(err){
             console.log('Error: ' + err)
@@ -839,6 +859,8 @@ function returnResponse(code){
                     6: "RET_BUFFER_TO_SMALL",
                     7: "RET_NO_FREE_BUFFER"
                 };
+				
+	adapter.log.debug('Function: returnResponse');
     return(text[code]);
 }
 
@@ -856,6 +878,8 @@ function returnPacketType(cmd){
         0x10: "RADIO_805_15_4",
         0x11: "COMMAND_2_4"
     };
+	
+	adapter.log.debug('Function: returnPacketType');
     return(types[cmd]);
 }
 
@@ -869,6 +893,8 @@ function returnEvent(event){
         6: "CO_DUTYCYCLE_LIMIT",
         7: "CO_TRANSMIT_FAILED"
     };
+	
+	adapter.log.debug('Function: returnEvent');
     return(events[event]);
 }
 
@@ -921,6 +947,8 @@ function returnCommonCMD(cmd){
         50: "CO_SET_NOISTHRESHOLD",
         51: "CO_GET_NOISETHRESHOLD"
     };
+	
+	adapter.log.debug('Function: returnCommonCMD');
     return(cCmds[cmd]);
 }
 

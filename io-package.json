@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "humiditysensor",
-        "version": "0.1.3",
+        "version": "0.1.4",
         "news": {
             "0.1.0": {
                 "en": "",
@@ -28,6 +28,17 @@
             "0.1.3": {
                 "en": "",
                 "de": "Formatierung Luftfeuchtigkeit auf zwei Nachkommastellen",
+                "ru": "",
+                "pt": "",
+                "nl": "",
+                "fr": "",
+                "it": "",
+                "es": "",
+                "pl": ""
+			},
+            "0.1.4": {
+                "en": "",
+                "de": "Debug infos hinzugefügt",
                 "ru": "",
                 "pt": "",
                 "nl": "",
