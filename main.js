@@ -538,14 +538,18 @@ function main() {
         });
 
         // the open event will always be emitted
-        SERIAL_PORT.on('open', function () {
-            adapter.log.debug("Port has been opened.");
-            adapter.setState('info.connection', true, true);
+        SERIAL_PORT.on('open', function (err) {
+		    if (err) {
+				adapter.log.debug("Port open error: ", err);
+			}
+			else {
+				adapter.log.debug("Port has been opened.");
+				adapter.setState('info.connection', true, true);				
+			}
         });
-
-        getGatewayInfo();
-
-
+		
+		setTimeout(function(){getGatewayInfo();},5000);  		
+        //getGatewayInfo();
         //      SERIAL_PORT.on('data', function (data) {
         //        parseMessage(data);
         //      });

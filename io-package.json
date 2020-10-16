@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "humiditysensor",
-        "version": "0.1.4",
+        "version": "0.1.5",
         "news": {
             "0.1.0": {
                 "en": "",
@@ -46,7 +46,18 @@
                 "it": "",
                 "es": "",
                 "pl": ""
-            }
+            },
+            "0.1.5": {
+                "en": "",
+                "de": "Serial port open check und setTimeOut hinzugefügt",
+                "ru": "",
+                "pt": "",
+                "nl": "",
+                "fr": "",
+                "it": "",
+                "es": "",
+                "pl": ""
+            }			
         },
         "title": "humiditysensor",
         "desc": {
